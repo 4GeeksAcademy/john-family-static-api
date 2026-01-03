@@ -40,10 +40,21 @@ def handle_hello():
 
 @app.route('/members', methods=['POST'])
 def add_member():
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "Invalid body"}), 400
-    new_member = jackson_family.add_member(data)
+    body = request.get_json(silent=True)
+    if body is None:
+        return jsonify({'msg': "Debes enviar información en el body"}), 400
+    if 'first_name' not in body:
+        return jsonify ({'msg': "Debes enviar el Nombre"}), 400
+    if 'age' not in body:
+        return jsonify ({'msg': "Debes enviar la Edad"}), 400
+    if 'lucky_numbers' not in body:
+        return jsonify ({'msg': "Debes enviar los numeros de la suerte"}), 400
+    new_member = {
+        'first_name' : body ['first_name'],
+        'age' : body ['age'],
+        'lucky_numbers': body ['lucky_numbers']
+    }
+    jackson_family.add_member(new_member)
     return jsonify(new_member), 200
 
 @app.route('/members/<int:id>', methods=['GET'])
